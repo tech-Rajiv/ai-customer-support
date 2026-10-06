@@ -30,7 +30,8 @@ export default async function RootLayout({ children }) {
             </div>
           </footer>
         </CartProvider>
-        <SupportChat userName={user?.name ?? null} />
+        {/* key: a different user (or logging out) starts a fresh conversation and greeting */}
+        <SupportChat key={user?.id ?? "guest"} userName={user?.name ?? null} />
       </body>
     </html>
   );

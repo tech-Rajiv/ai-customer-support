@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { askAgent } from "@/lib/support/agentClient";
 import ZeeAvatar from "@/app/components/ZeeAvatar";
+import { formatPrice } from "@/lib/format";
 
 // Cycles through short prompts with a typewriter effect, e.g. "Where is my order?".
 function TypingTeaser({ phrases }) {
@@ -29,6 +31,38 @@ function TypingTeaser({ phrases }) {
       {text}
       <span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse bg-zee-navy" />
     </span>
+  );
+}
+
+const SUGGESTIONS = [
+  "Any wireless earphones under ₹3000?",
+  "Show me keyboards",
+  "Best rated smart watch?",
+];
+
+// Tappable product result: opens the product detail page.
+function ProductChip({ product, onNavigate }) {
+  return (
+    <Link
+      href={`/products/${product.id}`}
+      onClick={onNavigate}
+      className="flex items-center gap-3 rounded-lg border border-zee-border bg-white p-2 hover:border-zee-orange-dark hover:shadow"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={product.image_url} alt="" className="h-14 w-14 shrink-0 rounded object-cover" />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-zee-navy">{product.name}</span>
+        <span className="block text-sm font-bold text-zee-navy">{formatPrice(product.price)}</span>
+        <span className="block text-xs text-gray-500">
+          {product.review_count ? (
+            <><span className="text-zee-star">★</span> {product.rating.toFixed(1)} ({product.review_count})</>
+          ) : (
+            "No reviews yet"
+          )}
+        </span>
+      </span>
+      <span className="text-lg text-gray-400" aria-hidden="true">›</span>
+    </Link>
   );
 }
 
@@ -63,9 +97,9 @@ export default function SupportChat({ userName }) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [turns, loading, open]);
 
-  async function send(e) {
-    e.preventDefault();
-    const text = input.trim();
+  async function send(e, preset) {
+    e?.preventDefault();
+    const text = (preset ?? input).trim();
     if (!text || loading) return;
 
     const userMsg = { id: nextId.current++, role: "user", content: text };
@@ -74,12 +108,13 @@ export default function SupportChat({ userName }) {
     setInput("");
     setLoading(true);
     try {
-      const reply = await askAgent(history);
-      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply }]);
-    } catch {
+      const { reply, products, sources } = await askAgent(history);
+      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply, products, sources }]);
+    } catch (err) {
+      const busy = err.message.startsWith("I'm getting");
       setTurns((t) => [
         ...t,
-        { id: nextId.current++, role: "assistant", content: "Sorry, something went wrong. Please try again." },
+        { id: nextId.current++, role: "assistant", content: busy ? err.message : "Sorry, something went wrong. Please try again." },
       ]);
     } finally {
       setLoading(false);
@@ -106,14 +141,40 @@ export default function SupportChat({ userName }) {
 
           <div className="flex-1 space-y-3 overflow-y-auto bg-background p-4">
             {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm ${
+              <div key={m.id} className={`flex flex-col gap-2 ${m.role === "user" ? "items-end" : "items-start"}`}>
+                <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm ${
                   m.role === "user" ? "rounded-br-sm bg-zee-yellow text-zee-navy" : "rounded-bl-sm border border-zee-border bg-white text-zee-navy"
                 }`}>
                   {m.content}
                 </div>
+                {m.sources?.length > 0 && (
+                  <p className="max-w-[85%] text-xs text-gray-500">
+                    📄 Source: {m.sources.map((src) => src.title.replace(/^ZeeCart /, "")).join(", ")}
+                  </p>
+                )}
+                {m.products?.length > 0 && (
+                  <div className="w-full max-w-[92%] space-y-2">
+                    {m.products.map((p) => (
+                      <ProductChip
+                        key={p.id}
+                        product={p}
+                        // Full-screen on phones: close the chat so the product page is visible.
+                        onNavigate={() => window.matchMedia("(max-width: 639px)").matches && setOpen(false)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
+            {turns.length === 0 && !loading && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {SUGGESTIONS.map((q) => (
+                  <button key={q} onClick={() => send(null, q)} className="rounded-full border border-zee-orange-dark bg-white px-3 py-1.5 text-xs text-zee-navy hover:bg-zee-orange/30">
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
             {loading && (
               <div className="flex justify-start" aria-label="Zee is typing">
                 <div className="flex gap-1 rounded-2xl rounded-bl-sm border border-zee-border bg-white px-4 py-3">
