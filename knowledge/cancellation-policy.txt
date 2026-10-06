@@ -1,0 +1,45 @@
+NovaCart Cancellation Policy
+
+Last updated: January 2026. This policy applies to all orders placed on NovaCart (a fictional company used for demonstration purposes).
+
+1. When customers can cancel
+An order can be cancelled for free while its status is "pending", "confirmed", or "processing". In these stages the product has not yet been handed to the carrier. Cancellation is immediate and the stock is returned to inventory.
+
+2. When cancellation is unavailable
+Cancellation is not possible when the order status is:
+- "shipped" (except for delayed orders, see section 4)
+- "out_for_delivery"
+- "delivered"
+- "cancelled" (the order is already cancelled)
+Once an order is delivered, the customer must use the return process described in the Return Policy instead.
+
+3. Cancellation after shipping
+After an order has shipped, NovaCart cannot recall the package automatically. Customers have two choices:
+- Refuse the delivery or let the package be returned to sender. The refund is issued when the package arrives back at our warehouse, less the original shipping fee.
+- Accept the delivery and then start a return within 30 days.
+Orders that are "out_for_delivery" cannot be recalled at all.
+
+4. Cancellation for delayed orders
+A delayed order is one that has not arrived by its expected delivery date and has the status "delayed".
+- If the order is delayed by up to 3 business days, support recommends waiting, because most delayed packages arrive within this time.
+- If the order is more than 3 business days past its expected delivery date, the customer may request cancellation even if the order has already shipped. Support requests a package recall from the carrier.
+- The refund for a cancelled delayed order is the full amount including the shipping fee. It is issued when the carrier confirms the recall, or after 10 business days at the latest.
+- If the package is delivered before the recall completes, the customer may keep the product or return it for free.
+
+5. What happens after cancellation
+- The order status changes to "cancelled" and the customer receives a confirmation email.
+- Products are returned to stock.
+- A refund is started automatically to the original payment method.
+- Cancelled orders cannot be reactivated. The customer needs to place a new order.
+- Promotional codes used on the cancelled order are restored if they have not expired.
+
+6. Partial cancellation
+If an order contains multiple items, individual items can be cancelled only while the entire order is in "pending", "confirmed", or "processing" status. After that, the order is treated as a whole.
+
+7. Refund timeline
+- Cancellations before shipping: the refund is started immediately and appears in 3 to 5 business days.
+- Cancellations of shipped delayed orders: the refund is started when the recall is confirmed, and appears in 3 to 5 business days after that.
+Customers can choose store credit for instant refunds, with a 5% bonus. See the Refund Policy for more information.
+
+8. Cancellations by NovaCart
+NovaCart may cancel an order because of pricing errors, stock problems, suspected fraud, or an invalid address. In these cases the customer is notified and refunded in full within 3 to 5 business days.

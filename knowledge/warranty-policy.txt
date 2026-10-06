@@ -1,0 +1,45 @@
+NovaCart Warranty Policy
+
+Last updated: January 2026. This policy applies to all products sold by NovaCart (a fictional company used for demonstration purposes).
+
+1. Warranty period
+Every NovaCart product includes a limited warranty that starts on the delivery date:
+- 12 months: wireless earphones, headphones, Bluetooth speakers, smart watches, webcams, mechanical keyboards, wireless mice, USB-C hubs, and power banks.
+- 6 months: laptop stands and other passive accessories.
+- Batteries: covered for 12 months, and considered defective if the maximum capacity falls below 70% of the rated capacity within that period under normal use.
+The warranty does not extend the return window. Returns are covered by the Return Policy, while warranty covers defects that appear later.
+
+2. Eligible defects
+The warranty covers defects in materials and workmanship that occur under normal use, including:
+- Device does not power on or charge.
+- Audio problems such as one earbud not working, crackling sound, or microphone failure.
+- Keys, buttons, or scroll wheels that stop responding.
+- Connectivity problems such as Bluetooth or USB ports that do not work.
+- Screen or sensor faults on smart watches.
+- Power banks that no longer charge or discharge.
+
+3. Exclusions
+The warranty does not cover:
+- Physical damage such as cracks, dents, bent parts, or broken hinges.
+- Liquid damage, beyond the stated water-resistance rating of the product.
+- Damage from unauthorized repairs, opening the device, or modifications.
+- Normal wear such as worn keycaps, scratched surfaces, or faded cables.
+- Loss or theft.
+- Damage caused by incompatible chargers or power sources.
+- Cosmetic damage that does not affect function.
+Products with removed or altered serial numbers are not covered.
+
+4. Warranty claim process
+1. Contact NovaCart Support and give the order number, a description of the problem, and photos or a short video of the defect.
+2. Support asks you to try basic troubleshooting such as resetting the device, updating firmware, or testing a different cable.
+3. If the problem remains, support creates a support ticket and issues a Return Authorization (RMA) number.
+4. Send the product to us within 14 days. NovaCart pays shipping for approved claims.
+5. The product is inspected within 5 business days of receipt.
+6. If approved, you receive a repair or replacement. If the claim is rejected, we explain the reason and offer a paid repair or return the product at your cost.
+
+5. Replacement vs repair
+- Dead on arrival: if the product is defective within the first 30 days after delivery, we replace it with a new unit, or refund it at your choice.
+- After 30 days: we first attempt a repair. Repairs are completed within 15 business days.
+- If a repair is not possible or takes longer than 15 business days, we replace the product with a new or refurbished unit of equal or better specification.
+- A replacement product carries the remaining warranty of the original, or 90 days, whichever is longer.
+- If the product is out of stock and cannot be replaced, a refund of the purchase price is issued.

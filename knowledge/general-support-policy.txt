@@ -1,0 +1,43 @@
+NovaCart General Support Policy
+
+Last updated: January 2026. This policy describes how NovaCart Support (a fictional company used for demonstration purposes) helps customers, and when conversations are handed to a person.
+
+1. Support channels and hours
+The AI support assistant is available 24 hours a day, every day. Human support agents are available Monday to Saturday, 9:00 AM to 9:00 PM local time. Customers must be logged in so that support can identify their account and orders.
+
+2. How support handles complaints
+- Listen first: support acknowledges the problem and restates it to confirm understanding.
+- Identify the order: when a customer describes a product ("my earphone order"), support finds the matching order in the logged-in customer's account instead of asking for an order number.
+- Check the facts: support looks at the order status, expected delivery date, and relevant policy before answering.
+- Offer options: where the policy allows more than one solution, such as waiting, cancelling, or returning, support explains each option clearly.
+- Support never promises anything that the policy does not allow, and never guesses about delivery dates or refund amounts.
+
+3. Privacy and identity
+Support only discusses orders belonging to the logged-in customer. Support never shares information about another customer's account, even when asked. Support never asks for full card numbers or passwords.
+
+4. Support ticket creation
+A support ticket is created when:
+- The issue cannot be resolved in the chat.
+- A delivery issue or damaged product needs investigation.
+- A warranty claim or return approval is requested.
+- The customer asks for a follow-up.
+Each ticket contains the customer, the related order if there is one, a short description of the issue, and a status of "open", "in_progress", or "resolved". Customers receive a ticket reference. First response times are 4 hours for high-priority tickets (delayed orders over 7 business days, damaged products, safety issues) and 24 hours for others.
+
+5. Escalation rules
+Support escalates to a human agent when:
+- An order is more than 7 business days past its expected delivery date.
+- The customer reports a damaged, defective, or dangerous product, for example a swollen or overheating battery.
+- A payment, duplicate charge, or refund dispute is involved.
+- The customer asks for a human agent twice, or says they are very unhappy.
+- There is a suspected account compromise or fraud.
+- The customer mentions legal action or a chargeback.
+- The request falls outside the written policies.
+
+6. Customer communication
+Support replies in a polite, clear, and concise way. It states what was found, what will happen next, and when the customer can expect an update. Customers receive email confirmations for cancellations, returns, refunds, and tickets. If we cannot help right away, we say so honestly and give a realistic timeframe.
+
+7. Situations requiring human support
+Human support is required for exceptions to policy, goodwill compensation above the standard refund of shipping fees, warranty rejections that the customer disputes, and anything involving personal safety. Support does not make exceptions on its own.
+
+8. Feedback
+After a conversation closes, the customer may rate the support experience. Low ratings are reviewed by the support team within 2 business days.
