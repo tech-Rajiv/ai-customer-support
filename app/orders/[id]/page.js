@@ -8,7 +8,7 @@ import { formatDate, formatPrice } from "@/lib/format";
 const STEPS = ["confirmed", "processing", "shipped", "out_for_delivery", "delivered"];
 const STEP_LABELS = ["Confirmed", "Processing", "Shipped", "Out for delivery", "Delivered"];
 const STATUS_NOTES = {
-  delayed: "This order is running late. Ask AI Support for help or about your options.",
+  delayed: "This order is running late. Ask Zee, our AI support assistant, about your options.",
   cancelled: "This order was cancelled.",
   pending: "We've received your order and are waiting for payment confirmation.",
 };
@@ -33,40 +33,40 @@ export default async function OrderPage({ params }) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <Link href="/dashboard" className="text-sm text-indigo-600 hover:underline">← Back to my orders</Link>
+      <Link href="/dashboard" className="text-sm text-zee-link hover:text-zee-link-hover hover:underline">← Back to my orders</Link>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">Order #{order.id}</h1>
+        <h1 className="text-3xl text-zee-navy">Order #{order.id}</h1>
         <StatusBadge status={order.status} />
       </div>
       {STATUS_NOTES[order.status] && (
-        <p className={`rounded-lg p-3 text-sm ${order.status === "delayed" ? "bg-amber-50 text-amber-800" : "bg-slate-100 text-slate-700"}`}>
+        <p className={`rounded-lg p-3 text-sm ${order.status === "delayed" ? "bg-amber-50 text-amber-800" : "bg-gray-100 text-gray-700"}`}>
           {STATUS_NOTES[order.status]}
         </p>
       )}
 
       {showTimeline && (
-        <ol className="grid grid-cols-5 gap-1 rounded-xl border border-slate-200 bg-white p-4 text-center text-xs shadow-sm">
+        <ol className="grid grid-cols-5 gap-1 rounded-lg border border-zee-border bg-white p-4 text-center text-xs ">
           {STEP_LABELS.map((label, i) => (
             <li key={label} className="space-y-1">
               <div className={`mx-auto h-2 w-full rounded-full ${
-                i <= stepIndex ? (order.status === "delayed" && i === stepIndex ? "bg-amber-400" : "bg-indigo-600") : "bg-slate-200"
+                i <= stepIndex ? (order.status === "delayed" && i === stepIndex ? "bg-amber-400" : "bg-[#007185]") : "bg-gray-200"
               }`} />
-              <span className={i <= stepIndex ? "font-medium" : "text-slate-400"}>{label}</span>
+              <span className={i <= stepIndex ? "font-medium" : "text-gray-400"}>{label}</span>
             </li>
           ))}
         </ol>
       )}
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-lg border border-zee-border bg-white">
         <ul className="divide-y">
           {order.items.map((item) => (
             <li key={item.product_id} className="flex items-center gap-4 p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.image_url} alt={item.name} className="h-16 w-16 rounded-lg bg-slate-100 object-cover" />
+              <img src={item.image_url} alt={item.name} className="h-16 w-16 rounded-lg bg-gray-100 object-cover" />
               <div className="flex-1">
                 <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-slate-500">Qty {item.quantity} × {formatPrice(item.price)}</p>
+                <p className="text-sm text-gray-500">Qty {item.quantity} × {formatPrice(item.price)}</p>
               </div>
               <p className="font-medium">{formatPrice(item.price * item.quantity)}</p>
             </li>
@@ -77,15 +77,15 @@ export default async function OrderPage({ params }) {
         </div>
       </div>
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 rounded-xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
-        <dt className="text-slate-500">Order placed</dt><dd>{formatDate(order.created_at)}</dd>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 rounded-lg border border-zee-border bg-white p-4 text-sm ">
+        <dt className="text-gray-500">Order placed</dt><dd>{formatDate(order.created_at)}</dd>
         {order.status !== "cancelled" && (
           <>
-            <dt className="text-slate-500">{order.status === "delivered" ? "Delivered" : "Expected delivery"}</dt>
+            <dt className="text-gray-500">{order.status === "delivered" ? "Delivered" : "Expected delivery"}</dt>
             <dd>{formatDate(order.expected_delivery)}</dd>
           </>
         )}
-        <dt className="text-slate-500">Last updated</dt><dd>{formatDate(order.updated_at)}</dd>
+        <dt className="text-gray-500">Last updated</dt><dd>{formatDate(order.updated_at)}</dd>
       </dl>
     </div>
   );

@@ -1,6 +1,6 @@
-NovaCart Cancellation Policy
+ZeeCart Cancellation Policy
 
-Last updated: January 2026. This policy applies to all orders placed on NovaCart (a fictional company used for demonstration purposes).
+Last updated: January 2026. This policy applies to all orders placed on ZeeCart (a fictional company used for demonstration purposes).
 
 1. When customers can cancel
 An order can be cancelled for free while its status is "pending", "confirmed", or "processing". In these stages the product has not yet been handed to the carrier. Cancellation is immediate and the stock is returned to inventory.
@@ -14,7 +14,7 @@ Cancellation is not possible when the order status is:
 Once an order is delivered, the customer must use the return process described in the Return Policy instead.
 
 3. Cancellation after shipping
-After an order has shipped, NovaCart cannot recall the package automatically. Customers have two choices:
+After an order has shipped, ZeeCart cannot recall the package automatically. Customers have two choices:
 - Refuse the delivery or let the package be returned to sender. The refund is issued when the package arrives back at our warehouse, less the original shipping fee.
 - Accept the delivery and then start a return within 30 days.
 Orders that are "out_for_delivery" cannot be recalled at all.
@@ -41,5 +41,5 @@ If an order contains multiple items, individual items can be cancelled only whil
 - Cancellations of shipped delayed orders: the refund is started when the recall is confirmed, and appears in 3 to 5 business days after that.
 Customers can choose store credit for instant refunds, with a 5% bonus. See the Refund Policy for more information.
 
-8. Cancellations by NovaCart
-NovaCart may cancel an order because of pricing errors, stock problems, suspected fraud, or an invalid address. In these cases the customer is notified and refunded in full within 3 to 5 business days.
+8. Cancellations by ZeeCart
+ZeeCart may cancel an order because of pricing errors, stock problems, suspected fraud, or an invalid address. In these cases the customer is notified and refunded in full within 3 to 5 business days.

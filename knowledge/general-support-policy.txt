@@ -1,9 +1,9 @@
-NovaCart General Support Policy
+ZeeCart General Support Policy
 
-Last updated: January 2026. This policy describes how NovaCart Support (a fictional company used for demonstration purposes) helps customers, and when conversations are handed to a person.
+Last updated: January 2026. This policy describes how ZeeCart Support (a fictional company used for demonstration purposes) helps customers, and when conversations are handed to a person.
 
 1. Support channels and hours
-The AI support assistant is available 24 hours a day, every day. Human support agents are available Monday to Saturday, 9:00 AM to 9:00 PM local time. Customers must be logged in so that support can identify their account and orders.
+Zee, the ZeeCart AI support assistant, is available 24 hours a day, every day. Human support agents (a team of 25 based in Bengaluru) are available Monday to Saturday, 9:00 AM to 8:00 PM IST. Customers must be logged in so that support can identify their account and orders.
 
 2. How support handles complaints
 - Listen first: support acknowledges the problem and restates it to confirm understanding.

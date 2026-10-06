@@ -1,28 +1,36 @@
-import { Geist } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/components/Header";
 import SupportChat from "@/app/components/SupportChat";
 import { CartProvider } from "@/app/components/CartProvider";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+import { getCurrentUser } from "@/lib/auth";
+import Logo from "@/app/components/Logo";
 
 export const metadata = {
-  title: "NovaCart — Everyday tech, delivered",
-  description: "NovaCart demo store with an AI support assistant.",
+  title: "ZeeCart — Online Shopping for Electronics & Accessories",
+  description: "ZeeCart demo store with Zee, an AI support assistant.",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const user = await getCurrentUser();
+  const cartUser = user ? { id: user.id } : null;
+
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
-        <CartProvider>
+    <html lang="en" className="h-full antialiased">
+      <body className="flex min-h-full flex-col">
+        <CartProvider user={cartUser}>
           <Header />
           <main className="flex-1">{children}</main>
-          <footer className="border-t border-slate-200 bg-white py-6 text-center text-sm text-slate-500">
-            NovaCart is a fictional demo store. Demo only — no real orders are placed.
+          <footer>
+            <a href="#top" className="block bg-zee-navy3 py-3 text-center text-sm text-white hover:bg-[#485769]">
+              Back to top
+            </a>
+            <div className="bg-zee-navy2 px-4 py-8 text-center text-xs text-gray-300">
+              <div className="mb-2 flex justify-center"><Logo dark size="sm" /></div>
+              ZeeCart is a fictional demo store. No real orders are placed. © 2026 ZeeCart
+            </div>
           </footer>
-          <SupportChat />
         </CartProvider>
+        <SupportChat userName={user?.name ?? null} />
       </body>
     </html>
   );

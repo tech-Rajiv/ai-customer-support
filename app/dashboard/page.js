@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getOrdersForUser, getTicketsForUser } from "@/lib/queries";
 import { formatDate } from "@/lib/format";
 
-export const metadata = { title: "My account — NovaCart" };
+export const metadata = { title: "Your Account — ZeeCart" };
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -14,37 +14,37 @@ export default async function DashboardPage() {
   const activeCount = orders.filter((o) => !["delivered", "cancelled"].includes(o.status)).length;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
+    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
       <section>
-        <h1 className="text-2xl font-bold">Welcome back, {user.name}!</h1>
-        <p className="text-slate-500">Here&apos;s what&apos;s happening with your orders.</p>
+        <h1 className="text-3xl text-zee-navy">Welcome back, {user.name}!</h1>
+        <p className="text-sm text-gray-600">Track your orders and manage your account.</p>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:col-span-2">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Account</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-            <dt className="text-slate-500">Name</dt><dd>{user.name}</dd>
-            <dt className="text-slate-500">Username</dt><dd className="font-mono">{user.username}</dd>
-            <dt className="text-slate-500">Email</dt><dd>{user.email}</dd>
-            <dt className="text-slate-500">Member since</dt><dd>{formatDate(user.created_at)}</dd>
+        <div className="rounded-lg border border-zee-border bg-white p-4 sm:col-span-2">
+          <h2 className="mb-2 text-lg font-bold text-zee-navy">Your Account</h2>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+            <dt className="text-gray-500">Name</dt><dd>{user.name}</dd>
+            <dt className="text-gray-500">Username</dt><dd className="font-mono">{user.username}</dd>
+            <dt className="text-gray-500">Email</dt><dd>{user.email}</dd>
+            <dt className="text-gray-500">Member since</dt><dd>{formatDate(user.created_at)}</dd>
           </dl>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400">Orders</h2>
-          <p className="text-3xl font-bold">{orders.length}</p>
-          <p className="text-sm text-slate-500">{activeCount} active</p>
-          <p className="mt-2 text-sm text-slate-500">{tickets.length} support ticket{tickets.length === 1 ? "" : "s"}</p>
+        <div className="rounded-lg border border-zee-border bg-white p-4">
+          <h2 className="mb-2 text-lg font-bold text-zee-navy">Overview</h2>
+          <p className="text-3xl text-zee-navy">{orders.length}</p>
+          <p className="text-sm text-gray-600">orders · {activeCount} in progress</p>
+          <p className="mt-2 text-sm text-gray-600">{tickets.length} support ticket{tickets.length === 1 ? "" : "s"}</p>
         </div>
       </section>
 
       <section>
-        <h2 className="mb-3 text-xl font-semibold">Recent orders</h2>
+        <h2 className="mb-3 text-2xl text-zee-navy">Your Orders</h2>
         {orders.length === 0 ? (
-          <p className="text-slate-500">You haven&apos;t placed any orders yet.</p>
+          <p className="rounded-lg border border-zee-border bg-white p-6 text-gray-600">You haven&apos;t placed any orders yet.</p>
         ) : (
           <div className="space-y-4">
-            {orders.map((o) => <OrderCard key={o.id} order={o} />)}
+            {orders.map((o) => <OrderCard key={o.id} order={o} customerName={user.name} />)}
           </div>
         )}
       </section>

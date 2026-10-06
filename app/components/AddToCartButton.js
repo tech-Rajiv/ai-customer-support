@@ -7,18 +7,20 @@ export default function AddToCartButton({ product }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
 
+  // For guests, addItem opens the "sign in" modal (see CartProvider).
   function handleClick() {
-    addItem(product);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+    if (addItem(product)) {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1200);
+    }
   }
 
   return (
     <button
       onClick={handleClick}
-      className="w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+      className="w-full rounded-full bg-zee-yellow px-3 py-2 text-sm text-zee-navy transition hover:bg-zee-yellow-dark"
     >
-      {added ? "Added ✓" : "Add to cart"}
+      {added ? "Added to cart ✓" : "Add to Cart"}
     </button>
   );
 }

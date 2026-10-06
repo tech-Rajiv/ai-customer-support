@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import LoginForm from "@/app/components/LoginForm";
 import { getCurrentUser } from "@/lib/auth";
 
-export const metadata = { title: "Log in — NovaCart" };
+export const metadata = { title: "Sign in — ZeeCart" };
 
 export default async function LoginPage() {
   if (await getCurrentUser()) redirect("/dashboard");

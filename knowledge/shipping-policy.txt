@@ -1,13 +1,13 @@
-NovaCart Shipping Policy
+ZeeCart Shipping Policy
 
-Last updated: January 2026. This policy applies to all orders placed on NovaCart (a fictional company used for demonstration purposes).
+Last updated: January 2026. This policy applies to all orders placed on ZeeCart (a fictional company used for demonstration purposes).
 
 1. Order processing
 Orders are processed within 1 business day of confirmation. Orders placed after 2:00 PM local time, or on weekends and public holidays, begin processing on the next business day. You will see the order status move from "pending" to "confirmed" to "processing" and then "shipped".
 
 2. Delivery options and estimates
-Standard delivery takes 5 to 7 business days after the order ships. Standard shipping is free on orders of $50 or more and costs $4.99 on smaller orders.
-Express delivery takes 2 to 3 business days after the order ships and costs $12.99. Express delivery is not available for PO boxes or remote regions.
+Standard delivery takes 5 to 7 business days after the order ships. Standard shipping is free on orders of ₹999 or more and costs ₹49 on smaller orders.
+Express delivery takes 2 to 3 business days after the order ships and costs ₹149. Express delivery is not available for PO boxes or remote regions.
 The expected delivery date shown on your order is an estimate, not a guarantee. It is calculated from the day your order ships and the delivery option you chose.
 
 3. Regional delays
@@ -18,7 +18,7 @@ An order is considered delayed when it has not been delivered by its expected de
 What customers should do when an order is delayed:
 - Wait at least 1 business day past the expected date, because carriers often complete deliveries late in the day.
 - Check the order page for status updates.
-- If the order is still not delivered, contact NovaCart Support with your order number, or simply describe the product you ordered.
+- If the order is still not delivered, contact ZeeCart Support with your order number, or simply describe the product you ordered.
 
 How support handles delays:
 - 1 to 3 business days past the expected date: support confirms the carrier status and shares the latest information.
@@ -34,10 +34,10 @@ Support escalates a delivery issue to the carrier investigation team when:
 An escalation receives a first response within 24 hours and a resolution within 7 business days.
 
 6. Lost packages
-If an order is not delivered within 10 business days of its expected delivery date, it is treated as lost. NovaCart will then either ship a replacement at no cost (subject to stock) or issue a full refund, according to the customer's choice.
+If an order is not delivered within 10 business days of its expected delivery date, it is treated as lost. ZeeCart will then either ship a replacement at no cost (subject to stock) or issue a full refund, according to the customer's choice.
 
 7. Address changes
-The delivery address can be changed only while the order is in "pending", "confirmed", or "processing" status. Once an order has shipped, the address cannot be changed by NovaCart.
+The delivery address can be changed only while the order is in "pending", "confirmed", or "processing" status. Once an order has shipped, the address cannot be changed by ZeeCart.
 
 8. Failed delivery attempts
 The carrier makes up to 3 delivery attempts. After the third failed attempt, the package is returned to our warehouse and a refund is issued less the original shipping cost.

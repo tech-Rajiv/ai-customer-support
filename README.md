@@ -1,6 +1,6 @@
-# NovaCart — AI support demo (foundation)
+# ZeeCart — AI support demo (foundation)
 
-Next.js (App Router, JavaScript) + PostgreSQL (`pg`) ecommerce demo. The AI agent (LangGraph, RAG, tools, voice) comes in a later step; the chat UI currently posts to a stub at `/api/agent`.
+Next.js (App Router, JavaScript) + PostgreSQL (`pg`) ecommerce demo. The AI agent (LangGraph, RAG, tools, voice) comes in a later step; the chat UI (agent name: **Zee**) currently posts to a stub at `/api/agent`.
 
 ## Setup
 1. `npm install`
@@ -19,5 +19,5 @@ Next.js (App Router, JavaScript) + PostgreSQL (`pg`) ecommerce demo. The AI agen
 - `app/` pages, components, `api/` (auth + `agent` stub)
 - `lib/` `db.js` (pg pool), `auth.js` (signed-cookie session), `queries.js` (data helpers)
 - `lib/support/agentClient.js` — what the chat UI calls; swap the backend behind `/api/agent` later
-- `scripts/seed.js`, `knowledge/` (fictional NovaCart policies for the RAG phase)
+- `scripts/seed.js`, `knowledge/` (fictional ZeeCart policies for the RAG phase)
 # ai-customer-support

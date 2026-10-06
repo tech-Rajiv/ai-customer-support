@@ -1,9 +1,9 @@
-NovaCart Warranty Policy
+ZeeCart Warranty Policy
 
-Last updated: January 2026. This policy applies to all products sold by NovaCart (a fictional company used for demonstration purposes).
+Last updated: January 2026. This policy applies to all products sold by ZeeCart (a fictional company used for demonstration purposes).
 
 1. Warranty period
-Every NovaCart product includes a limited warranty that starts on the delivery date:
+Every ZeeCart product includes a limited warranty that starts on the delivery date:
 - 12 months: wireless earphones, headphones, Bluetooth speakers, smart watches, webcams, mechanical keyboards, wireless mice, USB-C hubs, and power banks.
 - 6 months: laptop stands and other passive accessories.
 - Batteries: covered for 12 months, and considered defective if the maximum capacity falls below 70% of the rated capacity within that period under normal use.
@@ -30,10 +30,10 @@ The warranty does not cover:
 Products with removed or altered serial numbers are not covered.
 
 4. Warranty claim process
-1. Contact NovaCart Support and give the order number, a description of the problem, and photos or a short video of the defect.
+1. Contact ZeeCart Support and give the order number, a description of the problem, and photos or a short video of the defect.
 2. Support asks you to try basic troubleshooting such as resetting the device, updating firmware, or testing a different cable.
 3. If the problem remains, support creates a support ticket and issues a Return Authorization (RMA) number.
-4. Send the product to us within 14 days. NovaCart pays shipping for approved claims.
+4. Send the product to us within 14 days. ZeeCart pays shipping for approved claims.
 5. The product is inspected within 5 business days of receipt.
 6. If approved, you receive a repair or replacement. If the claim is rejected, we explain the reason and offer a paid repair or return the product at your cost.
 

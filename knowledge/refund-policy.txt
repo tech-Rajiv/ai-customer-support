@@ -1,17 +1,17 @@
-NovaCart Refund Policy
+ZeeCart Refund Policy
 
-Last updated: January 2026. This policy applies to all refunds issued by NovaCart (a fictional company used for demonstration purposes).
+Last updated: January 2026. This policy applies to all refunds issued by ZeeCart (a fictional company used for demonstration purposes).
 
 1. Refund eligibility
 A customer is eligible for a refund when:
 - An order is cancelled before delivery in line with the Cancellation Policy.
-- A product is returned within the 30-day return window and approved by NovaCart (see the Return Policy).
+- A product is returned within the 30-day return window and approved by ZeeCart (see the Return Policy).
 - A product arrives damaged, defective, or incorrect.
 - An order is lost, or delayed beyond the limits described in the Shipping Policy and the customer chooses to cancel.
 Refunds are not available for products returned after the return window, products that were damaged by the customer, or non-returnable items such as opened in-ear earphones that are not defective.
 
 2. Refund method
-Refunds are issued to the original payment method used for the purchase. We cannot refund to a different card or account. Customers may instead choose store credit, which is added to the NovaCart account instantly and is valid for 12 months. Customers who pick store credit receive a 5% bonus.
+Refunds are issued to the original payment method used for the purchase. We cannot refund to a different card or account. Customers may instead choose store credit, which is added to the ZeeCart account instantly and is valid for 12 months. Customers who pick store credit receive a 5% bonus.
 
 3. Refund processing time
 - After a cancellation before shipping: the refund is started immediately and appears within 3 to 5 business days.
@@ -24,10 +24,10 @@ Banks may need additional time to post a refund. If a refund has not appeared af
 A cancelled order is refunded in full, including taxes and shipping fees, when the cancellation is made before the order ships. For cancellations of delayed orders, the full amount is refunded including the shipping fee.
 
 5. Refund after return
-For change-of-mind returns, the refund equals the product price minus the $4.99 return label fee if you used our prepaid label. The original outbound shipping fee is not refunded unless the return is due to our error. If the returned product shows signs of use, the refund may be reduced by up to 50% after inspection, and the customer is notified by email before the refund is processed.
+For change-of-mind returns, the refund equals the product price minus the ₹99 return label fee if you used our prepaid label. The original outbound shipping fee is not refunded unless the return is due to our error. If the returned product shows signs of use, the refund may be reduced by up to 50% after inspection, and the customer is notified by email before the refund is processed.
 
 6. Damaged-product refunds
-For damaged, defective, or incorrect items reported within 7 days of delivery, NovaCart refunds the full product price plus the original shipping fee. The customer can choose between a refund and a free replacement. Products under $25 are refunded without needing to be returned.
+For damaged, defective, or incorrect items reported within 7 days of delivery, ZeeCart refunds the full product price plus the original shipping fee. The customer can choose between a refund and a free replacement. Products under ₹500 are refunded without needing to be returned.
 
 7. Partial refunds
 Partial refunds may be granted for orders with multiple items when only some items are returned or cancelled. The shipping fee is refunded only if the whole order is returned or cancelled.

@@ -2,32 +2,66 @@
 
 import { useEffect, useRef, useState } from "react";
 import { askAgent } from "@/lib/support/agentClient";
+import ZeeAvatar from "@/app/components/ZeeAvatar";
 
-const GREETING = { id: 0, role: "assistant", content: "Hi! How can I help?" };
+// Cycles through short prompts with a typewriter effect, e.g. "Where is my order?".
+function TypingTeaser({ phrases }) {
+  const [index, setIndex] = useState(0);
+  const [text, setText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
-function BotIcon({ size = 24 }) {
+  useEffect(() => {
+    const full = phrases[index % phrases.length];
+    let delay = deleting ? 25 : 55;
+    if (!deleting && text === full) delay = 2000; // hold the finished phrase
+    const t = setTimeout(() => {
+      if (!deleting && text === full) setDeleting(true);
+      else if (deleting && text === "") {
+        setDeleting(false);
+        setIndex((i) => i + 1);
+      } else setText(deleting ? full.slice(0, text.length - 1) : full.slice(0, text.length + 1));
+    }, delay);
+    return () => clearTimeout(t);
+  }, [text, deleting, index, phrases]);
+
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="4" y="8" width="16" height="11" rx="3" />
-      <path d="M12 8V4.5M9.5 4.5h5" />
-      <circle cx="9" cy="13.5" r="1" fill="currentColor" />
-      <circle cx="15" cy="13.5" r="1" fill="currentColor" />
-      <path d="M9.5 16.5h5" />
-    </svg>
+    <span aria-live="off">
+      {text}
+      <span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 animate-pulse bg-zee-navy" />
+    </span>
   );
 }
 
-export default function SupportChat() {
+export default function SupportChat({ userName }) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([GREETING]);
+  // Only real conversation turns live in state; the greeting is derived from the
+  // current user so it stays correct after login/logout.
+  const [turns, setTurns] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
   const nextId = useRef(1);
 
+  const firstName = userName ? userName.split(" ")[0] : null;
+  const greeting = {
+    id: 0,
+    role: "assistant",
+    content: `Hi${firstName ? ` ${firstName}` : ""}! 👋 I'm Zee, your ZeeCart assistant. How can I help you today?${
+      firstName ? "" : " (Log in so I can look up your orders.)"
+    }`,
+  };
+  const messages = [greeting, ...turns];
+  const teaserPhrases = [
+    firstName ? `Hi ${firstName}! I'm Zee 👋` : "Hi! I'm Zee 👋",
+    "Where is my order? 📦",
+    "Want to return or cancel something?",
+    "Ask me anything, I'm here to help!",
+  ];
+  const [teaserHidden, setTeaserHidden] = useState(false);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading, open]);
+  }, [turns, loading, open]);
 
   async function send(e) {
     e.preventDefault();
@@ -35,16 +69,16 @@ export default function SupportChat() {
     if (!text || loading) return;
 
     const userMsg = { id: nextId.current++, role: "user", content: text };
-    const history = [...messages, userMsg];
-    setMessages(history);
+    const history = [...turns, userMsg];
+    setTurns(history);
     setInput("");
     setLoading(true);
     try {
       const reply = await askAgent(history);
-      setMessages((m) => [...m, { id: nextId.current++, role: "assistant", content: reply }]);
+      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply }]);
     } catch {
-      setMessages((m) => [
-        ...m,
+      setTurns((t) => [
+        ...t,
         { id: nextId.current++, role: "assistant", content: "Sorry, something went wrong. Please try again." },
       ]);
     } finally {
@@ -55,33 +89,36 @@ export default function SupportChat() {
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white shadow-2xl sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-2xl sm:border sm:border-slate-200">
-          <div className="flex items-center justify-between bg-indigo-600 px-4 py-3 text-white">
+        <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white shadow-2xl sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-lg sm:border sm:border-zee-border">
+          <div className="flex items-center justify-between bg-zee-navy px-4 py-3 text-white">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20"><BotIcon /></span>
+              <span className="relative">
+                <ZeeAvatar size={40} />
+                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-zee-navy bg-green-400" />
+              </span>
               <div>
-                <p className="text-sm font-semibold leading-tight">AI Support</p>
-                <p className="text-xs text-indigo-100">NovaCart assistant · demo mode</p>
+                <p className="text-sm font-bold leading-tight">Zee</p>
+                <p className="text-xs text-gray-300">ZeeCart AI Support · Online · demo mode</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Close chat" className="rounded p-1 text-2xl leading-none hover:bg-white/20">×</button>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
+          <div className="flex-1 space-y-3 overflow-y-auto bg-background p-4">
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm ${
-                  m.role === "user" ? "rounded-br-sm bg-indigo-600 text-white" : "rounded-bl-sm border border-slate-200 bg-white text-slate-800"
+                  m.role === "user" ? "rounded-br-sm bg-zee-yellow text-zee-navy" : "rounded-bl-sm border border-zee-border bg-white text-zee-navy"
                 }`}>
                   {m.content}
                 </div>
               </div>
             ))}
             {loading && (
-              <div className="flex justify-start" aria-label="Assistant is typing">
-                <div className="flex gap-1 rounded-2xl rounded-bl-sm border border-slate-200 bg-white px-4 py-3">
+              <div className="flex justify-start" aria-label="Zee is typing">
+                <div className="flex gap-1 rounded-2xl rounded-bl-sm border border-zee-border bg-white px-4 py-3">
                   {[0, 150, 300].map((d) => (
-                    <span key={d} className="h-2 w-2 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${d}ms` }} />
+                    <span key={d} className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: `${d}ms` }} />
                   ))}
                 </div>
               </div>
@@ -89,26 +126,45 @@ export default function SupportChat() {
             <div ref={bottomRef} />
           </div>
 
-          <form onSubmit={send} className="flex items-center gap-2 border-t border-slate-200 bg-white p-3">
+          <form onSubmit={send} className="flex items-center gap-2 border-t border-zee-border bg-white p-3">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 rounded-full border border-slate-300 px-4 py-2 text-sm outline-none focus:border-indigo-500"
+              className="flex-1 rounded-full border border-gray-400 px-4 py-2 text-sm outline-none focus:border-zee-orange-dark focus:ring-2 focus:ring-zee-orange"
             />
-            <button disabled={!input.trim() || loading} aria-label="Send" className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50">
+            <button disabled={!input.trim() || loading} aria-label="Send" className="flex h-9 w-9 items-center justify-center rounded-full bg-zee-yellow text-zee-navy hover:bg-zee-yellow-dark disabled:opacity-50">
               ➤
             </button>
           </form>
         </div>
       )}
 
+      {!open && !teaserHidden && (
+        <div className="fixed bottom-24 right-6 z-50 hidden sm:block">
+          <div className="relative rounded-2xl rounded-br-sm border border-zee-border bg-white py-2.5 pl-4 pr-8 text-sm font-medium text-zee-navy shadow-xl">
+            <button onClick={() => setTeaserHidden(true)} aria-label="Dismiss" className="absolute right-2 top-1.5 text-lg leading-none text-gray-400 hover:text-gray-700">×</button>
+            <button onClick={() => setOpen(true)} className="block min-w-60 text-left">
+              <TypingTeaser phrases={teaserPhrases} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label={open ? "Close AI support" : "Open AI support"}
-        className={`fixed bottom-5 right-5 z-50 h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition hover:scale-105 hover:bg-indigo-700 ${open ? "hidden sm:flex" : "flex"}`}
+        aria-label={open ? "Close Zee support chat" : "Chat with Zee"}
+        className={`fixed bottom-6 right-6 z-50 items-center gap-3 rounded-full bg-zee-navy py-2 pl-2 pr-5 text-white shadow-2xl ring-2 ring-zee-orange transition hover:scale-105 ${open ? "hidden sm:flex" : "zee-float flex"}`}
       >
-        {open ? <span className="text-2xl leading-none">×</span> : <BotIcon size={28} />}
+        <span className="relative">
+          {!open && <span className="absolute inset-0 animate-ping rounded-full bg-zee-orange opacity-60" />}
+          <span className="relative block"><ZeeAvatar size={48} /></span>
+          <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-zee-navy bg-green-400" />
+        </span>
+        <span className="text-left leading-tight">
+          <span className="block text-base font-bold">{open ? "Close" : "Ask Zee"}</span>
+          {!open && <span className="block text-xs text-gray-300">AI support · online</span>}
+        </span>
       </button>
     </>
   );
