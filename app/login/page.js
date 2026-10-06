@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 export const metadata = { title: "Sign in — ZeeCart" };
 
 export default async function LoginPage() {
-  if (await getCurrentUser()) redirect("/dashboard");
+  if (await getCurrentUser()) redirect("/account");
   return (
     <div className="px-4 py-12">
       <LoginForm />

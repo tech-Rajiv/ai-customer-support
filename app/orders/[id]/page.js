@@ -33,7 +33,7 @@ export default async function OrderPage({ params }) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <Link href="/dashboard" className="text-sm text-zee-link hover:text-zee-link-hover hover:underline">← Back to my orders</Link>
+      <Link href="/orders" className="text-sm text-zee-link hover:text-zee-link-hover hover:underline">← Back to my orders</Link>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-3xl text-zee-navy">Order #{order.id}</h1>
@@ -65,8 +65,11 @@ export default async function OrderPage({ params }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={item.image_url} alt={item.name} className="h-16 w-16 rounded-lg bg-gray-100 object-cover" />
               <div className="flex-1">
-                <p className="font-medium">{item.name}</p>
+                <Link href={`/products/${item.product_id}`} className="font-medium text-zee-link hover:text-zee-link-hover hover:underline">{item.name}</Link>
                 <p className="text-sm text-gray-500">Qty {item.quantity} × {formatPrice(item.price)}</p>
+                {order.status !== "cancelled" && (
+                  <Link href={`/products/${item.product_id}#reviews`} className="text-xs text-zee-link hover:underline">Write a product review</Link>
+                )}
               </div>
               <p className="font-medium">{formatPrice(item.price * item.quantity)}</p>
             </li>

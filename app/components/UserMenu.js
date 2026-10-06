@@ -40,8 +40,11 @@ export default function UserMenu({ user }) {
           <div className="border-b px-4 pb-2 text-xs text-gray-600">
             Signed in as <span className="font-bold">{user.username}</span>
           </div>
-          <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-zee-link-hover">
-            Your Account &amp; Orders
+          <Link href="/account" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-zee-link-hover">
+            Your Account
+          </Link>
+          <Link href="/orders" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-zee-link-hover">
+            Your Orders
           </Link>
           <button onClick={logout} className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 hover:text-zee-link-hover">
             Sign Out
