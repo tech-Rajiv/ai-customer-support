@@ -1,6 +1,6 @@
 # ZeeCart — AI support demo (foundation)
 
-Next.js (App Router, JavaScript) + PostgreSQL (`pg`) ecommerce demo with **Zee**, a LangGraph + Groq support agent. Zee has two tools today: `search_products` (catalog, price filters) and `search_knowledge_base` (RAG over `knowledge/` using pgvector + Gemini embeddings). Order tools and voice come next.
+Next.js (App Router, JavaScript) + PostgreSQL (`pg`) ecommerce demo with **Zee**, a LangGraph + Groq support agent. Zee's tools: `search_products` (catalog, price filters), `search_knowledge_base` (RAG over `knowledge/` using pgvector + Gemini embeddings), `get_my_orders` (status, delivery, return window, cancellability), `cancel_order` and `return_order` (policy check in code, then Yes/No confirmation in the chat; the click calls the real API. Which actions need confirmation is the `HITL_ACTIONS` array in `lib/agent/humanInTheLoop.js`) and `create_support_ticket`. Voice comes next.
 
 ## Setup
 1. `npm install`

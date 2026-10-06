@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { askAgent } from "@/lib/support/agentClient";
+import ActionConfirmation from "@/app/components/ActionConfirmation";
 import ZeeAvatar from "@/app/components/ZeeAvatar";
 import { STATUS_LABELS, STATUS_STYLES, formatPrice } from "@/lib/format";
 
@@ -89,6 +90,26 @@ function OrderChip({ order, onNavigate }) {
   );
 }
 
+function TicketChip({ ticket, onNavigate }) {
+  return (
+    <Link
+      href="/account"
+      onClick={onNavigate}
+      className="flex items-center gap-3 rounded-lg border border-zee-border bg-white p-2.5 hover:border-zee-orange-dark hover:shadow"
+    >
+      <span className="text-2xl" aria-hidden="true">🎫</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-medium text-zee-navy">Support ticket #{ticket.id}</span>
+        <span className="block truncate text-xs text-gray-600">
+          <span className="capitalize">{ticket.status}</span> · {ticket.priority === "high" ? "High priority" : "Normal priority"}
+          {ticket.orderId ? ` · Order #${ticket.orderId}` : ""}
+        </span>
+      </span>
+      <span className="text-lg text-gray-400" aria-hidden="true">›</span>
+    </Link>
+  );
+}
+
 export default function SupportChat({ userName }) {
   const [open, setOpen] = useState(false);
   // Only real conversation turns live in state; the greeting is derived from the
@@ -131,8 +152,8 @@ export default function SupportChat({ userName }) {
     setInput("");
     setLoading(true);
     try {
-      const { reply, products, sources, orders } = await askAgent(history);
-      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply, products, sources, orders }]);
+      const { reply, products, sources, orders, actions, tickets } = await askAgent(history);
+      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply, products, sources, orders, actions, tickets }]);
     } catch (err) {
       const busy = err.message.startsWith("I'm getting");
       setTurns((t) => [
@@ -146,8 +167,9 @@ export default function SupportChat({ userName }) {
 
   return (
     <>
-      {open && (
-        <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white shadow-2xl sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-lg sm:border sm:border-zee-border">
+      {/* Always mounted, just hidden when closed: unmounting would reset each card's state
+          (e.g. a confirmed cancellation would show Yes/No again on reopening). */}
+      <div className={`fixed inset-0 z-50 ${open ? "flex" : "hidden"} flex-col overflow-hidden bg-white shadow-2xl sm:inset-auto sm:bottom-24 sm:right-5 sm:h-[32rem] sm:w-96 sm:rounded-lg sm:border sm:border-zee-border`}>
           <div className="flex items-center justify-between bg-zee-navy px-4 py-3 text-white">
             <div className="flex items-center gap-3">
               <span className="relative">
@@ -174,6 +196,18 @@ export default function SupportChat({ userName }) {
                   <p className="max-w-[85%] text-xs text-gray-500">
                     📄 Source: {m.sources.map((src) => src.title.replace(/^ZeeCart /, "")).join(", ")}
                   </p>
+                )}
+                {m.actions?.length > 0 && (
+                  <div className="w-full max-w-[92%]">
+                    {m.actions.map((a) => <ActionConfirmation key={`${a.action}-${a.orderId}`} proposal={a} />)}
+                  </div>
+                )}
+                {m.tickets?.length > 0 && (
+                  <div className="w-full max-w-[92%]">
+                    {m.tickets.map((t) => (
+                      <TicketChip key={t.id} ticket={t} onNavigate={() => window.matchMedia("(max-width: 639px)").matches && setOpen(false)} />
+                    ))}
+                  </div>
                 )}
                 {m.orders?.length > 0 && (
                   <div className="w-full max-w-[92%] space-y-2">
@@ -229,7 +263,6 @@ export default function SupportChat({ userName }) {
             </button>
           </form>
         </div>
-      )}
 
       {!open && !teaserHidden && (
         <div className="fixed bottom-24 right-6 z-50 hidden sm:block">

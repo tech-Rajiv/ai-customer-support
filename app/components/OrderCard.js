@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CancelSection from "@/app/components/CancelSection";
 import ReturnSection from "@/app/components/ReturnSection";
 import StatusBadge from "@/app/components/StatusBadge";
 import { formatDate, formatPrice, isActiveOrder } from "@/lib/format";
@@ -26,6 +27,7 @@ export default function OrderCard({ order, customerName }) {
             )}
           </div>
           <ReturnSection order={order} />
+          <CancelSection order={order} />
           <ul className="space-y-3">
             {order.items.map((item) => (
               <li key={item.product_id} className="flex items-center gap-3">

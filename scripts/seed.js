@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   order_id   INTEGER REFERENCES orders(id) ON DELETE SET NULL,
   issue      TEXT NOT NULL,
   status     VARCHAR(30) NOT NULL DEFAULT 'open',
+  priority   VARCHAR(10) NOT NULL DEFAULT 'normal' CHECK (priority IN ('normal','high')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -146,9 +147,9 @@ const PRODUCTS = [
 const ORDERS = {
   userA: [
     { status: "delivered", created: -30, expected: -23, items: [["keyboard", 1], ["mouse", 1]] },
-    // Intentionally delayed: expected delivery already passed. Used for the future
-    // "check my order of the earphone" agent scenario.
-    { status: "delayed", created: -12, expected: -5, items: [["earphones", 1]] },
+    // Delayed 8 days (5+ business days): past the 3-business-day wait, so it can be cancelled.
+    // Used for the "check my order of the earphone" agent scenario.
+    { status: "delayed", created: -15, expected: -8, items: [["earphones", 1]] },
     { status: "shipped", created: -3, expected: 3, items: [["stand", 1], ["hub", 1]] },
     // Delivered 3 days ago: returnable (e.g. "my power bank is not working").
     { status: "delivered", created: -6, expected: -3, items: [["powerbank", 1]] },
@@ -161,7 +162,7 @@ const ORDERS = {
     { status: "delivered", created: -10, expected: -8, items: [["mouse", 1]] },
   ],
   user3: [
-    { status: "delayed", created: -14, expected: -6, items: [["headphones", 1]] },
+    { status: "delayed", created: -9, expected: -3, items: [["headphones", 1]] },
     { status: "delivered", created: -25, expected: -18, items: [["hub", 1]] },
     { status: "confirmed", created: -1, expected: 6, items: [["watch", 1], ["mouse", 1]] },
     // Delivered yesterday: returnable.

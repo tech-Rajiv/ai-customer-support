@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import CancelSection from "@/app/components/CancelSection";
 import ReturnSection from "@/app/components/ReturnSection";
 import StatusBadge from "@/app/components/StatusBadge";
 import { getCurrentUser } from "@/lib/auth";
@@ -49,6 +50,7 @@ export default async function OrderPage({ params }) {
 
       {order.status === "delivered" && <ReturnSection order={order} />}
       {order.status === "return_requested" && <ReturnSection order={order} />}
+      <CancelSection order={order} />
 
       {showTimeline && (
         <ol className="grid grid-cols-5 gap-1 rounded-lg border border-zee-border bg-white p-4 text-center text-xs ">

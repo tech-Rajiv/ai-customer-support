@@ -4,7 +4,10 @@ import { getAgent } from "@/lib/agent/graph";
 import { getCurrentUser } from "@/lib/auth";
 
 // POST { messages: [{ role: "user" | "assistant", content }] }
-// -> { reply: string, products: [{ id, name, price, image_url, ... }], sources: [{ source, title, section }], orders: [{ id, status, items, total }] }
+// -> { reply: string, products: [{ id, name, price, image_url, ... }], sources: [{ source, title, section }], orders: [{ id, status, items, total }],
+//      actions: [{ action: "cancel_order" | "return_order", status: "proposal" | "done", orderId, ... }]
+//        (proposals wait for the customer's click: see lib/agent/humanInTheLoop.js),
+//      tickets: [{ id, status, priority, ... }] }
 // `products` / `sources` are the artifacts produced by tool calls during this turn.
 // Only the most recent messages are sent to the model: fewer tokens per call on the free tier.
 const MAX_HISTORY = 6;
@@ -68,13 +71,18 @@ export async function POST(request) {
       .flatMap((m) => m.artifact)
       .slice(0, 3);
 
+    const artifacts = (toolName) =>
+      turn.filter((m) => m.type === "tool" && m.name === toolName && Array.isArray(m.artifact)).flatMap((m) => m.artifact);
+    const actions = [...artifacts("cancel_order"), ...artifacts("return_order")].slice(0, 1);
+    const tickets = artifacts("create_support_ticket").slice(0, 1);
+
     const last = result.messages.at(-1);
     // The chat shows plain text, so drop markdown emphasis the model sometimes adds.
     const reply = (typeof last.content === "string" ? last.content : "")
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/`([^`]+)`/g, "$1")
       .trim();
-    return NextResponse.json({ reply: reply || "Sorry, I couldn't come up with an answer. Could you rephrase?", products, sources, orders });
+    return NextResponse.json({ reply: reply || "Sorry, I couldn't come up with an answer. Could you rephrase?", products, sources, orders, actions, tickets });
   } catch (err) {
     if (err?.status === 429) {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });

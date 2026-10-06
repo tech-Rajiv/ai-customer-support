@@ -62,7 +62,7 @@ export default async function AccountPage() {
           ) : (
             <ul className="space-y-1">
               {tickets.slice(0, 3).map((t) => (
-                <li key={t.id}>#{t.id} · <span className="capitalize">{t.status}</span> — {t.issue}</li>
+                <li key={t.id}>#{t.id} · <span className="capitalize">{t.status}</span>{t.priority === "high" && <span className="font-bold text-red-700"> · High</span>} — {t.issue}</li>
               ))}
             </ul>
           )}
