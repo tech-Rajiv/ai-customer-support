@@ -3,13 +3,15 @@ import { redirect } from "next/navigation";
 import OrderCard from "@/app/components/OrderCard";
 import { getCurrentUser } from "@/lib/auth";
 import { getOrdersForUser } from "@/lib/queries";
+import { isActiveOrder } from "@/lib/format";
 
 export const metadata = { title: "Your Orders — ZeeCart" };
 
 const FILTERS = [
   { key: "all", label: "All orders", test: () => true },
-  { key: "active", label: "In progress", test: (o) => !["delivered", "cancelled"].includes(o.status) },
+  { key: "active", label: "In progress", test: (o) => isActiveOrder(o.status) },
   { key: "delivered", label: "Delivered", test: (o) => o.status === "delivered" },
+  { key: "returns", label: "Returns", test: (o) => o.status === "return_requested" },
   { key: "cancelled", label: "Cancelled", test: (o) => o.status === "cancelled" },
 ];
 

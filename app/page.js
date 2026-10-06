@@ -14,7 +14,7 @@ const FALLBACK_STYLE = { icon: "🛍️", gradient: "from-slate-500 to-slate-700
 
 const PERKS = [
   { icon: "🚚", title: "Free delivery", text: "On orders over ₹999" },
-  { icon: "↩️", title: "30-day returns", text: "Hassle-free approvals" },
+  { icon: "↩️", title: "10-day returns", text: "Hassle-free approvals" },
   { icon: "🛡️", title: "12-month warranty", text: "On most electronics" },
   { icon: "💬", title: "Zee AI support", text: "Help 24/7, humans Mon–Sat" },
 ];

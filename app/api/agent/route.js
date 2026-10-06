@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { getAgent } from "@/lib/agent/graph";
+import { getCurrentUser } from "@/lib/auth";
 
 // POST { messages: [{ role: "user" | "assistant", content }] }
-// -> { reply: string, products: [{ id, name, price, image_url, ... }], sources: [{ source, title, section }] }
+// -> { reply: string, products: [{ id, name, price, image_url, ... }], sources: [{ source, title, section }], orders: [{ id, status, items, total }] }
 // `products` / `sources` are the artifacts produced by tool calls during this turn.
 // Only the most recent messages are sent to the model: fewer tokens per call on the free tier.
 const MAX_HISTORY = 6;
 
 // Groq's free tier has a tokens-per-minute cap. When it says "try again in 6s" and the
 // wait is short, wait and retry once instead of failing the customer's message.
-async function invokeWithRateLimitRetry(history) {
-  const run = () => getAgent().invoke({ messages: history }, { recursionLimit: 8 });
+async function invokeWithRateLimitRetry(history, userId) {
+  // userId reaches the tools via config.configurable: they only ever see this customer's data.
+  const run = () => getAgent().invoke({ messages: history }, { recursionLimit: 8, configurable: { userId } });
   try {
     return await run();
   } catch (err) {
@@ -42,7 +44,8 @@ export async function POST(request) {
   }
 
   try {
-    const result = await invokeWithRateLimitRetry(history);
+    const user = await getCurrentUser();
+    const result = await invokeWithRateLimitRetry(history, user?.id ?? null);
 
     // Cards from tool calls made after the customer's latest message.
     const turn = result.messages.slice(history.length);
@@ -60,13 +63,18 @@ export async function POST(request) {
       .filter((s) => !knowledge.has(s.source) && knowledge.add(s.source))
       .slice(0, 3);
 
+    const orders = turn
+      .filter((m) => m.type === "tool" && m.name === "get_my_orders" && Array.isArray(m.artifact))
+      .flatMap((m) => m.artifact)
+      .slice(0, 3);
+
     const last = result.messages.at(-1);
     // The chat shows plain text, so drop markdown emphasis the model sometimes adds.
     const reply = (typeof last.content === "string" ? last.content : "")
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/`([^`]+)`/g, "$1")
       .trim();
-    return NextResponse.json({ reply: reply || "Sorry, I couldn't come up with an answer. Could you rephrase?", products, sources });
+    return NextResponse.json({ reply: reply || "Sorry, I couldn't come up with an answer. Could you rephrase?", products, sources, orders });
   } catch (err) {
     if (err?.status === 429) {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });

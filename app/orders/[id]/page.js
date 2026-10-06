@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import ReturnSection from "@/app/components/ReturnSection";
 import StatusBadge from "@/app/components/StatusBadge";
 import { getCurrentUser } from "@/lib/auth";
 import { getOrderForUser } from "@/lib/queries";
@@ -10,6 +11,7 @@ const STEP_LABELS = ["Confirmed", "Processing", "Shipped", "Out for delivery", "
 const STATUS_NOTES = {
   delayed: "This order is running late. Ask Zee, our AI support assistant, about your options.",
   cancelled: "This order was cancelled.",
+  return_requested: "Your return has been requested. Support will confirm within 1 business day with return instructions, and your refund follows once we inspect the item.",
   pending: "We've received your order and are waiting for payment confirmation.",
 };
 
@@ -29,7 +31,7 @@ export default async function OrderPage({ params }) {
     order.status === "delayed" ? 2
     : order.status === "pending" ? -1
     : STEPS.indexOf(order.status);
-  const showTimeline = order.status !== "cancelled";
+  const showTimeline = !["cancelled", "return_requested"].includes(order.status);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
@@ -44,6 +46,9 @@ export default async function OrderPage({ params }) {
           {STATUS_NOTES[order.status]}
         </p>
       )}
+
+      {order.status === "delivered" && <ReturnSection order={order} />}
+      {order.status === "return_requested" && <ReturnSection order={order} />}
 
       {showTimeline && (
         <ol className="grid grid-cols-5 gap-1 rounded-lg border border-zee-border bg-white p-4 text-center text-xs ">
@@ -84,10 +89,11 @@ export default async function OrderPage({ params }) {
         <dt className="text-gray-500">Order placed</dt><dd>{formatDate(order.created_at)}</dd>
         {order.status !== "cancelled" && (
           <>
-            <dt className="text-gray-500">{order.status === "delivered" ? "Delivered" : "Expected delivery"}</dt>
-            <dd>{formatDate(order.expected_delivery)}</dd>
+            <dt className="text-gray-500">{order.delivered_at ? "Delivered" : "Expected delivery"}</dt>
+            <dd>{formatDate(order.delivered_at ?? order.expected_delivery)}</dd>
           </>
         )}
+        <dt className="text-gray-500">Shipping address</dt><dd>{order.shipping_address}</dd>
         <dt className="text-gray-500">Last updated</dt><dd>{formatDate(order.updated_at)}</dd>
       </dl>
     </div>

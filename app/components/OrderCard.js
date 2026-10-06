@@ -1,9 +1,10 @@
 import Link from "next/link";
+import ReturnSection from "@/app/components/ReturnSection";
 import StatusBadge from "@/app/components/StatusBadge";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, isActiveOrder } from "@/lib/format";
 
 export default function OrderCard({ order, customerName }) {
-  const active = !["delivered", "cancelled"].includes(order.status);
+  const active = isActiveOrder(order.status);
   return (
     <div className="overflow-hidden rounded-lg border border-zee-border bg-white">
       <div className="flex flex-wrap items-center gap-x-8 gap-y-2 border-b border-zee-border bg-[#f0f2f2] px-4 py-3 text-xs text-gray-600">
@@ -17,13 +18,14 @@ export default function OrderCard({ order, customerName }) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <StatusBadge status={order.status} />
-            {order.status !== "cancelled" && (
+            {order.status !== "cancelled" && order.status !== "return_requested" && (
               <span className="text-sm text-gray-700">
                 {active ? "Expected delivery " : "Delivery date "}
                 <b>{formatDate(order.expected_delivery)}</b>
               </span>
             )}
           </div>
+          <ReturnSection order={order} />
           <ul className="space-y-3">
             {order.items.map((item) => (
               <li key={item.product_id} className="flex items-center gap-3">

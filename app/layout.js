@@ -12,7 +12,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const user = await getCurrentUser();
-  const cartUser = user ? { id: user.id } : null;
+  const cartUser = user ? { id: user.id, address: user.address } : null;
 
   return (
     <html lang="en" className="h-full antialiased">

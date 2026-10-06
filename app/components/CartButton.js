@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/app/components/CartProvider";
+import PlaceOrderModal from "@/app/components/PlaceOrderModal";
 import { formatPrice } from "@/lib/format";
 
 export default function CartButton() {
   const { isLoggedIn, items, count, removeItem, clear } = useCart();
   const [open, setOpen] = useState(false);
+  const [checkout, setCheckout] = useState(false);
   const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
 
   return (
@@ -57,12 +59,18 @@ export default function CartButton() {
               <div className="mt-3 flex justify-between border-t pt-3 text-sm font-bold">
                 <span>Subtotal</span><span>{formatPrice(total)}</span>
               </div>
-              <p className="mt-2 text-xs text-gray-500">Checkout is disabled in this demo.</p>
+              <button
+                onClick={() => { setCheckout(true); setOpen(false); }}
+                className="mt-3 w-full rounded-full bg-zee-yellow py-2 text-sm hover:bg-zee-yellow-dark"
+              >
+                Place order (demo)
+              </button>
               <button onClick={clear} className="mt-2 text-xs text-zee-link hover:underline">Clear cart</button>
             </>
           )}
         </div>
       )}
+          {checkout && <PlaceOrderModal items={items} onClose={() => setCheckout(false)} onPlaced={clear} />}
     </div>
   );
 }

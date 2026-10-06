@@ -35,12 +35,15 @@ export function CartProvider({ user, children }) {
     [storageKey],
   );
 
+  // True when logged in; otherwise opens the "sign in" modal and returns false.
+  const requireLogin = useCallback(() => {
+    if (!userId) setLoginPromptOpen(true);
+    return !!userId;
+  }, [userId]);
+
   const addItem = useCallback(
     (product) => {
-      if (!userId) {
-        setLoginPromptOpen(true);
-        return false;
-      }
+      if (!requireLogin()) return false;
       const existing = items.find((i) => i.id === product.id);
       persist(
         existing
@@ -49,7 +52,7 @@ export function CartProvider({ user, children }) {
       );
       return true;
     },
-    [userId, items, persist],
+    [requireLogin, items, persist],
   );
 
   const removeItem = useCallback((id) => persist(items.filter((i) => i.id !== id)), [items, persist]);
@@ -57,7 +60,9 @@ export function CartProvider({ user, children }) {
   const count = items.reduce((n, i) => n + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ isLoggedIn: !!userId, items, count, addItem, removeItem, clear }}>
+    <CartContext.Provider
+      value={{ isLoggedIn: !!userId, address: user?.address ?? "", requireLogin, items, count, addItem, removeItem, clear }}
+    >
       {children}
       {loginPromptOpen && <LoginPrompt onClose={() => setLoginPromptOpen(false)} />}
     </CartContext.Provider>

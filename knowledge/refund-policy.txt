@@ -5,7 +5,7 @@ Last updated: January 2026. This policy applies to all refunds issued by ZeeCart
 1. Refund eligibility
 A customer is eligible for a refund when:
 - An order is cancelled before delivery in line with the Cancellation Policy.
-- A product is returned within the 30-day return window and approved by ZeeCart (see the Return Policy).
+- A product is returned within the 10-day return window and approved by ZeeCart (see the Return Policy).
 - A product arrives damaged, defective, or incorrect.
 - An order is lost, or delayed beyond the limits described in the Shipping Policy and the customer chooses to cancel.
 Refunds are not available for products returned after the return window, products that were damaged by the customer, or non-returnable items such as opened in-ear earphones that are not defective.

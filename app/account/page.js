@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import StatusBadge from "@/app/components/StatusBadge";
 import { getCurrentUser } from "@/lib/auth";
 import { getOrdersForUser, getTicketsForUser } from "@/lib/queries";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, isActiveOrder } from "@/lib/format";
 
 export const metadata = { title: "Your Account — ZeeCart" };
 
@@ -26,7 +26,7 @@ export default async function AccountPage() {
   if (!user) redirect("/login");
 
   const [orders, tickets] = await Promise.all([getOrdersForUser(user.id), getTicketsForUser(user.id)]);
-  const activeCount = orders.filter((o) => !["delivered", "cancelled"].includes(o.status)).length;
+  const activeCount = orders.filter((o) => isActiveOrder(o.status)).length;
   const latest = orders[0];
 
   return (
@@ -44,6 +44,11 @@ export default async function AccountPage() {
             <dt className="text-gray-500">Email</dt><dd className="break-all">{user.email}</dd>
             <dt className="text-gray-500">Member since</dt><dd>{formatDate(user.created_at)}</dd>
           </dl>
+        </Card>
+
+        <Card title="Saved address">
+          <p className="text-gray-800">{user.address}</p>
+          <p className="mt-1 text-xs text-gray-500">Orders ship here. Demo accounts can&apos;t change it.</p>
         </Card>
 
         <Card title="Your orders" href="/orders" linkText="View all orders">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/app/components/AddToCartButton";
+import BuyNowButton from "@/app/components/BuyNowButton";
 import RatingSummary from "@/app/components/RatingSummary";
 import ReviewForm from "@/app/components/ReviewForm";
 import Stars from "@/app/components/Stars";
@@ -57,7 +58,7 @@ export default async function ProductPage({ params }) {
           </div>
           <ul className="list-disc space-y-1 pl-5 text-sm text-gray-800">
             <li>12-month ZeeCart warranty on most electronics</li>
-            <li>30-day returns on eligible products</li>
+            <li>{product.return_days}-day returns after delivery</li>
             <li>Free standard delivery on orders over ₹999</li>
           </ul>
         </div>
@@ -68,7 +69,12 @@ export default async function ProductPage({ params }) {
             <span className="font-bold text-zee-link">FREE delivery</span> on orders over ₹999. Standard delivery in 5–7 business days.
           </p>
           <p className={`text-lg font-bold ${stockClass}`}>{stockText}</p>
-          {product.stock > 0 && <AddToCartButton product={{ id: product.id, name: product.name, price: product.price }} />}
+          {product.stock > 0 && (
+            <div className="space-y-2">
+              <AddToCartButton product={{ id: product.id, name: product.name, price: product.price }} />
+              <BuyNowButton product={{ id: product.id, name: product.name, price: product.price }} />
+            </div>
+          )}
           <p className="text-xs text-gray-600">🔒 Secure transaction · Sold by ZeeCart</p>
         </aside>
       </section>

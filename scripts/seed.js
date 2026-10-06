@@ -17,13 +17,18 @@ const DAY = 24 * 60 * 60 * 1000;
 const daysFromNow = (n) => new Date(Date.now() + n * DAY);
 const img = (seed) => `https://picsum.photos/seed/${seed}/600/600`;
 
+// Demo tables are dropped and rebuilt so schema changes apply. knowledge_chunks (RAG)
+// is created by `npm run ingest` and is intentionally left untouched.
 const SCHEMA = `
+DROP TABLE IF EXISTS returns, reviews, support_tickets, order_items, orders, products, users CASCADE;
+
 CREATE TABLE IF NOT EXISTS users (
   id            SERIAL PRIMARY KEY,
   username      VARCHAR(50) UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   name          VARCHAR(100) NOT NULL,
   email         VARCHAR(255) UNIQUE NOT NULL,
+  address       TEXT NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -35,6 +40,10 @@ CREATE TABLE IF NOT EXISTS products (
   image_url   TEXT NOT NULL,
   category    VARCHAR(50) NOT NULL,
   stock       INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+  -- Days after delivery that the customer may return the product.
+  return_days INTEGER NOT NULL DEFAULT 10 CHECK (return_days >= 0),
+  -- In-ear products: returnable only if defective, damaged or wrong item.
+  defect_only_return BOOLEAN NOT NULL DEFAULT false,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -43,9 +52,12 @@ CREATE TABLE IF NOT EXISTS orders (
   user_id           INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   status            VARCHAR(30) NOT NULL
     CHECK (status IN ('pending','confirmed','processing','shipped',
-                      'out_for_delivery','delayed','delivered','cancelled')),
+                      'out_for_delivery','delayed','delivered','cancelled',
+                      'return_requested')),
   total_amount      NUMERIC(10, 2) NOT NULL,
   expected_delivery DATE,
+  delivered_at      TIMESTAMPTZ,
+  shipping_address  TEXT NOT NULL,
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -78,25 +90,35 @@ CREATE TABLE IF NOT EXISTS reviews (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS returns (
+  id         SERIAL PRIMARY KEY,
+  order_id   INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  reason     VARCHAR(30) NOT NULL,
+  comment    TEXT NOT NULL DEFAULT '',
+  status     VARCHAR(30) NOT NULL DEFAULT 'requested',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- One review per customer per product (seeded sample reviews have no user_id).
 CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_user_product
   ON reviews(product_id, user_id) WHERE user_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
-
--- Older versions of this demo stored a rating column on products.
-ALTER TABLE products DROP COLUMN IF EXISTS rating;
 `;
 
 const USERS = [
-  { username: "userA", password: "passwordA", name: "Alex Carter", email: "alex.carter@example.com" },
-  { username: "userB", password: "passwordB", name: "Bella Nguyen", email: "bella.nguyen@example.com" },
-  { username: "user3", password: "passwordC", name: "Chris Patel", email: "chris.patel@example.com" },
+  { username: "userA", password: "passwordA", name: "Alex Carter", email: "alex.carter@example.com",
+    address: "Alex Carter, 14 Residency Road, Shanti Nagar, Bengaluru, Karnataka 560025, India" },
+  { username: "userB", password: "passwordB", name: "Bella Nguyen", email: "bella.nguyen@example.com",
+    address: "Bella Nguyen, 22 Linking Road, Bandra West, Mumbai, Maharashtra 400050, India" },
+  { username: "user3", password: "passwordC", name: "Chris Patel", email: "chris.patel@example.com",
+    address: "Chris Patel, 7 Sector 18, Noida, Uttar Pradesh 201301, India" },
 ];
 
 const PRODUCTS = [
-  { key: "earphones", name: "Wireless Earphones", category: "Audio", price: 1999, stock: 120,
+  { key: "earphones", name: "Wireless Earphones", category: "Audio", price: 1999, stock: 120, defectOnlyReturn: true,
     description: "True wireless in-ear earphones with noise isolation, 24-hour battery life with the charging case, and IPX4 sweat resistance." },
   { key: "keyboard", name: "Mechanical Keyboard", category: "Computer Accessories", price: 3499, stock: 60,
     description: "Compact 75% hot-swappable mechanical keyboard with tactile switches, PBT keycaps, and white backlighting." },
@@ -118,7 +140,9 @@ const PRODUCTS = [
     description: "20,000mAh power bank with 22.5W fast charging and two USB-A plus one USB-C port." },
 ];
 
-// status, createdDaysAgo, expectedDeliveryDaysFromNow, items: [productKey, qty]
+// status, created / expected (days from now, negative = past), items: [productKey, qty].
+// Delivered orders are delivered on their `expected` day. 10-day return window, so:
+//   delivered 23 / 18 / 13 days ago -> window closed; 8 / 3 / 1 days ago -> still returnable.
 const ORDERS = {
   userA: [
     { status: "delivered", created: -30, expected: -23, items: [["keyboard", 1], ["mouse", 1]] },
@@ -126,16 +150,25 @@ const ORDERS = {
     // "check my order of the earphone" agent scenario.
     { status: "delayed", created: -12, expected: -5, items: [["earphones", 1]] },
     { status: "shipped", created: -3, expected: 3, items: [["stand", 1], ["hub", 1]] },
+    // Delivered 3 days ago: returnable (e.g. "my power bank is not working").
+    { status: "delivered", created: -6, expected: -3, items: [["powerbank", 1]] },
   ],
   userB: [
     { status: "delivered", created: -20, expected: -13, items: [["speaker", 1]] },
     { status: "out_for_delivery", created: -5, expected: 0, items: [["webcam", 1]] },
     { status: "cancelled", created: -8, expected: -1, items: [["powerbank", 2]] },
+    // Delivered 8 days ago: only 2 days left to return.
+    { status: "delivered", created: -10, expected: -8, items: [["mouse", 1]] },
   ],
   user3: [
     { status: "delayed", created: -14, expected: -6, items: [["headphones", 1]] },
     { status: "delivered", created: -25, expected: -18, items: [["hub", 1]] },
     { status: "confirmed", created: -1, expected: 6, items: [["watch", 1], ["mouse", 1]] },
+    // Delivered yesterday: returnable.
+    { status: "delivered", created: -5, expected: -1, items: [["stand", 1]] },
+    // Return already requested 7 days ago.
+    { status: "return_requested", created: -14, expected: -9, items: [["speaker", 1]],
+      ret: { reason: "defective", comment: "The right speaker channel stopped working.", daysAgo: 7 } },
   ],
 };
 
@@ -200,17 +233,12 @@ async function main() {
   try {
     await client.query("BEGIN");
     await client.query(SCHEMA);
-    // Re-runnable: wipe existing demo data first.
-    await client.query(
-      "TRUNCATE reviews, support_tickets, order_items, orders, products, users RESTART IDENTITY CASCADE",
-    );
-
     const userIds = {};
     for (const u of USERS) {
       const hash = await bcrypt.hash(u.password, 10);
       const { rows } = await client.query(
-        "INSERT INTO users (username, password_hash, name, email) VALUES ($1,$2,$3,$4) RETURNING id",
-        [u.username, hash, u.name, u.email],
+        "INSERT INTO users (username, password_hash, name, email, address) VALUES ($1,$2,$3,$4,$5) RETURNING id",
+        [u.username, hash, u.name, u.email, u.address],
       );
       userIds[u.username] = rows[0].id;
     }
@@ -218,9 +246,10 @@ async function main() {
     const products = {};
     for (const p of PRODUCTS) {
       const { rows } = await client.query(
-        `INSERT INTO products (name, description, price, image_url, category, stock)
-         VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-        [p.name, p.description, p.price, img(p.key), p.category, p.stock],
+        `INSERT INTO products (name, description, price, image_url, category, stock, return_days, defect_only_return)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+        // Electronics and wearables: 10-day return window.
+        [p.name, p.description, p.price, img(p.key), p.category, p.stock, 10, !!p.defectOnlyReturn],
       );
       products[p.key] = { id: rows[0].id, price: p.price };
     }
@@ -245,13 +274,26 @@ async function main() {
         // Delivered/cancelled orders were last updated near their end date.
         const updatedAt =
           o.status === "delivered" ? daysFromNow(o.expected)
+          : o.status === "return_requested" ? daysFromNow(-o.ret.daysAgo)
           : o.status === "cancelled" ? daysFromNow(o.created + 1)
           : daysFromNow(Math.min(0, o.created + 2));
         const { rows } = await client.query(
-          `INSERT INTO orders (user_id, status, total_amount, expected_delivery, created_at, updated_at)
-           VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-          [userIds[username], o.status, total.toFixed(2), daysFromNow(o.expected), createdAt, updatedAt],
+          `INSERT INTO orders (user_id, status, total_amount, expected_delivery, delivered_at,
+                               shipping_address, created_at, updated_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+          [
+            userIds[username], o.status, total.toFixed(2), daysFromNow(o.expected),
+            ["delivered", "return_requested"].includes(o.status) ? daysFromNow(o.expected) : null,
+            USERS.find((u) => u.username === username).address,
+            createdAt, updatedAt,
+          ],
         );
+        if (o.ret) {
+          await client.query(
+            "INSERT INTO returns (order_id, user_id, reason, comment, created_at) VALUES ($1,$2,$3,$4,$5)",
+            [rows[0].id, userIds[username], o.ret.reason, o.ret.comment, daysFromNow(-o.ret.daysAgo)],
+          );
+        }
         for (const [key, qty] of o.items) {
           await client.query(
             "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1,$2,$3,$4)",

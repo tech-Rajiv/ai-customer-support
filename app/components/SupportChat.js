@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { askAgent } from "@/lib/support/agentClient";
 import ZeeAvatar from "@/app/components/ZeeAvatar";
-import { formatPrice } from "@/lib/format";
+import { STATUS_LABELS, STATUS_STYLES, formatPrice } from "@/lib/format";
 
 // Cycles through short prompts with a typewriter effect, e.g. "Where is my order?".
 function TypingTeaser({ phrases }) {
@@ -37,7 +37,7 @@ function TypingTeaser({ phrases }) {
 const SUGGESTIONS = [
   "Any wireless earphones under ₹3000?",
   "Show me keyboards",
-  "Best rated smart watch?",
+  "Where is my earphone order?",
 ];
 
 // Tappable product result: opens the product detail page.
@@ -59,6 +59,29 @@ function ProductChip({ product, onNavigate }) {
           ) : (
             "No reviews yet"
           )}
+        </span>
+      </span>
+      <span className="text-lg text-gray-400" aria-hidden="true">›</span>
+    </Link>
+  );
+}
+
+// Tappable order result: opens the order page (where returns are confirmed).
+function OrderChip({ order, onNavigate }) {
+  return (
+    <Link
+      href={`/orders/${order.id}`}
+      onClick={onNavigate}
+      className="flex items-center gap-3 rounded-lg border border-zee-border bg-white p-2.5 hover:border-zee-orange-dark hover:shadow"
+    >
+      <span className="text-2xl" aria-hidden="true">📦</span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-zee-navy">Order #{order.id} · {order.items.join(", ")}</span>
+        <span className="mt-0.5 flex items-center gap-2 text-xs text-gray-600">
+          <span className={`rounded px-1.5 py-0.5 font-bold ${STATUS_STYLES[order.status] ?? "bg-gray-100"}`}>
+            {STATUS_LABELS[order.status] ?? order.status}
+          </span>
+          {formatPrice(order.total)}
         </span>
       </span>
       <span className="text-lg text-gray-400" aria-hidden="true">›</span>
@@ -108,8 +131,8 @@ export default function SupportChat({ userName }) {
     setInput("");
     setLoading(true);
     try {
-      const { reply, products, sources } = await askAgent(history);
-      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply, products, sources }]);
+      const { reply, products, sources, orders } = await askAgent(history);
+      setTurns((t) => [...t, { id: nextId.current++, role: "assistant", content: reply, products, sources, orders }]);
     } catch (err) {
       const busy = err.message.startsWith("I'm getting");
       setTurns((t) => [
@@ -151,6 +174,13 @@ export default function SupportChat({ userName }) {
                   <p className="max-w-[85%] text-xs text-gray-500">
                     📄 Source: {m.sources.map((src) => src.title.replace(/^ZeeCart /, "")).join(", ")}
                   </p>
+                )}
+                {m.orders?.length > 0 && (
+                  <div className="w-full max-w-[92%] space-y-2">
+                    {m.orders.map((o) => (
+                      <OrderChip key={o.id} order={o} onNavigate={() => window.matchMedia("(max-width: 639px)").matches && setOpen(false)} />
+                    ))}
+                  </div>
                 )}
                 {m.products?.length > 0 && (
                   <div className="w-full max-w-[92%] space-y-2">

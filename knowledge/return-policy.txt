@@ -3,7 +3,7 @@ ZeeCart Return Policy
 Last updated: January 2026. This policy applies to all products sold by ZeeCart (a fictional company used for demonstration purposes).
 
 1. Return window
-You can request a return within 30 days of the delivery date. The 30 days start on the day the order status changes to "delivered". Return requests made after 30 days are not accepted, except for warranty claims (see the Warranty Policy).
+You can request a return within 10 days of the delivery date. This applies to all electronics and wearables sold by ZeeCart, including audio products, computer accessories, mobile accessories, office electronics, and smart watches. The 10 days start on the day the order status changes to "delivered", and the exact last day for each order is shown on its order page. Return requests made after the 10 days are not accepted, except for warranty claims (see the Warranty Policy).
 
 2. Eligible products
 Most products can be returned if they are:
@@ -27,19 +27,21 @@ Products that show clear signs of use, such as scratches, stains, worn keycaps, 
 
 6. Customer responsibility
 Customers are responsible for:
+- Requesting the return within the 10-day window.
 - Packing the product securely, ideally in its original box.
-- Returning the product within 10 days after the return is approved.
+- Sending the product back within 10 days after the return is approved.
 - Return shipping costs for change-of-mind returns. A flat ₹99 return label fee is deducted from the refund when you use a ZeeCart prepaid label.
 - Removing personal data from devices such as smart watches.
 
-7. Return approval process
-1. Contact support or open a return request from your order page and state the reason.
-2. Support checks the eligibility (delivery date, product type, and condition) and replies within 1 business day.
-3. If approved, you receive a Return Authorization number (RMA) and return instructions.
-4. Send the product back within 10 days of approval.
-5. The warehouse inspects the product within 3 business days of receiving it.
-6. The refund is processed as described in the Refund Policy.
-Returns sent without an RMA number may be delayed or rejected.
+7. How to request a return and approval process
+1. Open Your Orders on the ZeeCart website and find the delivered order. While the return window is open, the order shows a "Return items" button and the last day to return.
+2. Choose the reason for the return: defective or not working, arrived damaged, wrong item received, not as described, no longer needed, or found a better price. Add a comment if you wish, then confirm.
+3. The order status changes to "return_requested". Orders whose return window has closed show no return button.
+4. Support checks the request and replies within 1 business day with a Return Authorization number (RMA) and return instructions.
+5. Send the product back within 10 days of approval.
+6. The warehouse inspects the product within 3 business days of receiving it.
+7. The refund is processed as described in the Refund Policy.
+Only one return request can be made per order. In-ear products such as wireless earphones can only be returned if they are defective, damaged, or the wrong item, so for those orders only these reasons are accepted.
 
 8. Exchanges
 We do not offer direct exchanges. To get a different product, return the original for a refund and place a new order. For defective items, a replacement can be arranged.
