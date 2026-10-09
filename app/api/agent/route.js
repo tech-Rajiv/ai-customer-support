@@ -115,8 +115,8 @@ export async function POST(request) {
     const narratesOrders = orders.length >= 2 || isOrderList(reply);
     if (orders.length > 0 && actions.length === 0 && tickets.length === 0 && narratesOrders) {
       reply = hindi
-        ? "ये रहे आपके ऑर्डर। बताइए, इनमें से किसी के साथ क्या करना है?"
-        : "Here's what you've ordered. Tell me what you'd like to do with any of these.";
+        ? "ये रहे आपके हाल के ऑर्डर। कोई पुराना चाहिए? तारीख या प्रोडक्ट बताइए।"
+        : "Here are your latest orders. Want an older one? Tell me the date or the product.";
     } else if (products.length > 0 && isProductList(reply)) {
       reply = hindi
         ? "हाँ, कुछ विकल्प मिल गए। नीचे कार्ड देखिए और डिटेल के लिए एक पर टैप कीजिए।"
