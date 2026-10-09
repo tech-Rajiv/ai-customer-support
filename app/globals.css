@@ -48,6 +48,15 @@ body {
 }
 .zee-float { animation: zee-float 3s ease-in-out infinite; }
 
+@keyframes zee-freq {
+  0%, 100% { transform: scaleY(0.28); }
+  50% { transform: scaleY(1); }
+}
+.zee-freq-bar {
+  transform-origin: center;
+  animation: zee-freq ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .zee-eye, .zee-float { animation: none; }
+  .zee-eye, .zee-float, .zee-freq-bar { animation: none; }
 }

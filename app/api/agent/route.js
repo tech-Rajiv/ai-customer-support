@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { NextResponse, after } from "next/server";
+import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { awaitAllCallbacks } from "@langchain/core/callbacks/promises";
 import { getAgent } from "@/lib/agent/graph";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -11,6 +12,21 @@ import { getCurrentUser } from "@/lib/auth";
 // `products` / `sources` are the artifacts produced by tool calls during this turn.
 // Only the most recent messages are sent to the model: fewer tokens per call on the free tier.
 const MAX_HISTORY = 6;
+
+// The model sometimes lists every product even though the cards are on screen.
+function isProductList(reply) {
+  const bullets = /(?:^|\n)\s*[-•*]/.test(reply);
+  const severalPrices = (reply.match(/₹/g) || []).length >= 2;
+  return bullets || severalPrices || reply.length > 180;
+}
+
+// Same for orders: the cards already show number, items, status and price.
+function isOrderList(reply) {
+  const bullets = /(?:^|\n)\s*[-•*]/.test(reply);
+  const severalOrders = (reply.match(/order\s*#?\s*\d+/gi) || []).length >= 2;
+  const severalPrices = (reply.match(/₹/g) || []).length >= 2;
+  return bullets || severalOrders || severalPrices || reply.length > 180;
+}
 
 // Groq's free tier has a tokens-per-minute cap. When it says "try again in 6s" and the
 // wait is short, wait and retry once instead of failing the customer's message.
@@ -30,7 +46,9 @@ async function invokeWithRateLimitRetry(history, userId) {
 }
 
 export async function POST(request) {
-  const { messages } = await request.json().catch(() => ({}));
+  const body = await request.json().catch(() => ({}));
+  const { messages } = body;
+  const hindi = body.lang === "hi";
   if (!Array.isArray(messages) || messages.length === 0) {
     return NextResponse.json({ error: "messages must be a non-empty array" }, { status: 400 });
   }
@@ -45,6 +63,17 @@ export async function POST(request) {
   if (history.length === 0 || !(history.at(-1) instanceof HumanMessage)) {
     return NextResponse.json({ error: "The last message must come from the user." }, { status: 400 });
   }
+  history.unshift(
+    new SystemMessage(
+      hindi
+        ? "You are a woman. Use a warm female tone. The customer turned Hindi on: reply only in simple spoken Hindi in Devanagari. For yourself use feminine forms such as सकती हूँ, never सकता. Keep replies short enough to say aloud."
+        : "You are a woman. Use a warm female tone in English. Keep replies short enough to say aloud.",
+    ),
+  );
+
+  // LangSmith uploads traces in the background. Keep the function alive after the response
+  // until that finishes, otherwise runs can stay "pending" (spinner) in LangSmith.
+  after(() => awaitAllCallbacks());
 
   try {
     const user = await getCurrentUser();
@@ -69,7 +98,7 @@ export async function POST(request) {
     const orders = turn
       .filter((m) => m.type === "tool" && m.name === "get_my_orders" && Array.isArray(m.artifact))
       .flatMap((m) => m.artifact)
-      .slice(0, 3);
+      .slice(0, 6);
 
     const artifacts = (toolName) =>
       turn.filter((m) => m.type === "tool" && m.name === toolName && Array.isArray(m.artifact)).flatMap((m) => m.artifact);
@@ -78,11 +107,29 @@ export async function POST(request) {
 
     const last = result.messages.at(-1);
     // The chat shows plain text, so drop markdown emphasis the model sometimes adds.
-    const reply = (typeof last.content === "string" ? last.content : "")
+    let reply = (typeof last.content === "string" ? last.content : "")
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/`([^`]+)`/g, "$1")
       .trim();
-    return NextResponse.json({ reply: reply || "Sorry, I couldn't come up with an answer. Could you rephrase?", products, sources, orders, actions, tickets });
+    // Several order cards are the list. Don't let the model narrate each one.
+    const narratesOrders = orders.length >= 2 || isOrderList(reply);
+    if (orders.length > 0 && actions.length === 0 && tickets.length === 0 && narratesOrders) {
+      reply = hindi
+        ? "ये रहे आपके ऑर्डर। बताइए, इनमें से किसी के साथ क्या करना है?"
+        : "Here's what you've ordered. Tell me what you'd like to do with any of these.";
+    } else if (products.length > 0 && isProductList(reply)) {
+      reply = hindi
+        ? "हाँ, कुछ विकल्प मिल गए। नीचे कार्ड देखिए और डिटेल के लिए एक पर टैप कीजिए।"
+        : "Yeah, I found a few options. See the cards below and tap one for the details.";
+    }
+    return NextResponse.json({
+      reply: reply || (hindi ? "क्षमा कीजिए, समझ नहीं आया। फिर से बताइए?" : "Sorry, I couldn't come up with an answer. Could you rephrase?"),
+      products,
+      sources,
+      orders,
+      actions,
+      tickets,
+    });
   } catch (err) {
     if (err?.status === 429) {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
